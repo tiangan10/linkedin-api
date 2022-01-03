@@ -23,4 +23,4 @@ build
 venv/
 
 # Secret
-secret.txt
+secrete.txt
