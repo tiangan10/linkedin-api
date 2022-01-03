@@ -21,3 +21,6 @@ build
 .DS_Store
 .idea/
 venv/
+
+# Secret
+secret.txt
