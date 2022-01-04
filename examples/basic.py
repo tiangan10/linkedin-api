@@ -9,6 +9,5 @@ if credentials:
 
     profile = linkedin.get_profile("ACoAABQ11fIBQLGQbB1V1XPBZJsRwfK5r1U2Rzw")
     profile["contact_info"] = linkedin.get_profile_contact_info(
-        "ACoAABQ11fIBQLGQbB1V1XPBZJsRwfK5r1U2Rzw"
-    )
+        "ACoAABQ11fIBQLGQbB1V1XPBZJsRwfK5r1U2Rzw")
     connections = linkedin.get_profile_connections(profile["profile_id"])

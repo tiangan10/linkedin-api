@@ -24,17 +24,19 @@ class Client(object):
     LINKEDIN_BASE_URL = "https://www.linkedin.com"
     API_BASE_URL = f"{LINKEDIN_BASE_URL}/voyager/api"
     REQUEST_HEADERS = {
-        "user-agent": " ".join(
-            [
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5)",
-                "AppleWebKit/537.36 (KHTML, like Gecko)",
-                "Chrome/83.0.4103.116 Safari/537.36",
-            ]
-        ),
+        "user-agent":
+        " ".join([
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5)",
+            "AppleWebKit/537.36 (KHTML, like Gecko)",
+            "Chrome/83.0.4103.116 Safari/537.36",
+        ]),
         # "accept": "application/vnd.linkedin.normalized+json+2.1",
-        "accept-language": "en-AU,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
-        "x-li-lang": "en_US",
-        "x-restli-protocol-version": "2.0.0",
+        "accept-language":
+        "en-AU,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+        "x-li-lang":
+        "en_US",
+        "x-restli-protocol-version":
+        "2.0.0",
         # "x-li-track": '{"clientVersion":"1.2.6216","osName":"web","timezoneOffset":10,"deviceFormFactor":"DESKTOP","mpName":"voyager-web"}',
     }
 
@@ -49,9 +51,12 @@ class Client(object):
         "Accept-Language": "en-us",
     }
 
-    def __init__(
-        self, *, debug=False, refresh_cookies=False, proxies={}, cookies_dir=None
-    ):
+    def __init__(self,
+                 *,
+                 debug=False,
+                 refresh_cookies=False,
+                 proxies={},
+                 cookies_dir=None):
         self.session = requests.session()
         self.session.proxies.update(proxies)
         self.session.headers.update(Client.REQUEST_HEADERS)
@@ -81,9 +86,8 @@ class Client(object):
         Set cookies of the current session and save them to a file named as the username.
         """
         self.session.cookies = cookies
-        self.session.headers["csrf-token"] = self.session.cookies["JSESSIONID"].strip(
-            '"'
-        )
+        self.session.headers["csrf-token"] = self.session.cookies[
+            "JSESSIONID"].strip('"')
 
     @property
     def cookies(self):
@@ -117,14 +121,17 @@ class Client(object):
 
         soup = BeautifulSoup(res.text, "lxml")
 
-        clientApplicationInstanceRaw = soup.find(
-            "meta", attrs={"name": "applicationInstance"}
-        ).attrs["content"]
+        clientApplicationInstanceRaw = soup.find("meta",
+                                                 attrs={
+                                                     "name":
+                                                     "applicationInstance"
+                                                 }).attrs["content"]
         clientApplicationInstance = json.loads(clientApplicationInstanceRaw)
 
-        clientPageInstanceId = soup.find(
-            "meta", attrs={"name": "clientPageInstanceId"}
-        ).attrs["content"]
+        clientPageInstanceId = soup.find("meta",
+                                         attrs={
+                                             "name": "clientPageInstanceId"
+                                         }).attrs["content"]
 
         self.metadata["clientApplicationInstance"] = clientApplicationInstance
         self.metadata["clientPageInstanceId"] = clientPageInstanceId

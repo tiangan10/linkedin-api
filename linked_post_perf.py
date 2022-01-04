@@ -8,7 +8,9 @@ import os
 
 _DALIANA = "dalianaliu"
 _FILE_PATH = "/Users/" + os.getlogin() + "/Documents/linkedin_api/data/"
-_MAX_POST_COUNT=10
+_MAX_POST_COUNT = 1000
+_NORMAL_POST_COUNT = 100
+
 
 def _get_abs_time(time_diff):
     num, unit, _ = time_diff.split(" ")
@@ -42,9 +44,8 @@ def _get_val(the_dict, *args):
 
 
 def _get_reaction_type_count(post, row):
-    count_stats = _get_val(
-        post, "socialDetail", "totalSocialActivityCounts", "reactionTypeCounts"
-    )
+    count_stats = _get_val(post, "socialDetail", "totalSocialActivityCounts",
+                           "reactionTypeCounts")
     if count_stats is None:
         print("return none")
         return
@@ -69,9 +70,8 @@ def _get_post_text(post, row):
 
 
 def _get_post_num_comments(post, row):
-    num_comments = _get_val(
-        post, "socialDetail", "totalSocialActivityCounts", "numComments"
-    )
+    num_comments = _get_val(post, "socialDetail", "totalSocialActivityCounts",
+                            "numComments")
     row["comment"] = num_comments
 
 
@@ -85,6 +85,7 @@ def _get_post_time(post, row):
 def _get_row_val(row, key, default_val=""):
     return str(row[key]) if key in row else default_val
 
+
 def _filter_data(rows, start_date, end_date):
     new_rows = []
     for row in rows:
@@ -97,7 +98,7 @@ def _filter_data(rows, start_date, end_date):
         if end_date and row_time > end_date:
             continue
         new_rows.append(row)
-    return new_rows    
+    return new_rows
 
 
 def _write_to_csv(file_path, rows):
@@ -128,16 +129,23 @@ def _write_to_csv(file_path, rows):
             f.write("\n")
 
 
-def get_linkedin_performance(target, email, password, post_count, start_date, end_date):
+def get_linkedin_performance(target, email, password, post_count, start_date,
+                             end_date):
+    if start_date or end_date:
+        print(
+            "You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date..."
+        )
+        post_count = _MAX_POST_COUNT
     api = Linkedin(email, password)
     target_user = api.get_profile(target)
-    if start_date or end_date:
-        print("You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date...")
-        post_count = _MAX_POST_COUNT
     print("We will get TOP %d posts info for %s." % (post_count, target))
-    posts = api.get_profile_posts(
-        urn_id=target_user["profile_id"], post_count=post_count
-    )
+    posts = api.get_profile_posts(urn_id=target_user["profile_id"],
+                                  post_count=post_count)
+    if len(posts) > post_count:
+        print(
+            "There are %d posts retrieved, it is because we have to fetch 100 multiple posts."
+            % len(posts))
+        posts = posts[:post_count]
     rows = [dict() for i in range(len(posts))]
     for i, post in enumerate(posts):
         _get_post_url(post, rows[i])
@@ -152,34 +160,43 @@ def get_linkedin_performance(target, email, password, post_count, start_date, en
 
 
 def main():
-    parser = argparse.ArgumentParser(description="This app helps you to find your linkedin post performance.")
-    parser.add_argument(
-        "--email", type=str, help="Your linkedin account email",
-        required=True
+    parser = argparse.ArgumentParser(
+        description="This app helps you to find your linkedin post performance."
     )
-    parser.add_argument(
-        "--password", type=str, help="Your linkedin account password",
-        required=True
-    )
-    parser.add_argument(
-        "--post_num", type=int, help="How many posts should be processed"
-    )
+    parser.add_argument("--email",
+                        type=str,
+                        help="Your linkedin account email",
+                        required=True)
+    parser.add_argument("--password",
+                        type=str,
+                        help="Your linkedin account password",
+                        required=True)
+    parser.add_argument("--post_num",
+                        type=int,
+                        help="How many posts should be processed")
     parser.add_argument(
         "--linkedin_account",
         type=str,
         help="Which LinkedIn account are you interested in",
     )
-    parser.add_argument("--start_date", type=str, help="What's the start date that you are interested in?, format %Y-%m-%d")
-    parser.add_argument("--end_date", type=str, help="What's the start date that you are interested in?, format %Y-%m-%d")
+    parser.add_argument(
+        "--start_date",
+        type=str,
+        help=
+        "What's the start date that you are interested in?, format %Y-%m-%d")
+    parser.add_argument(
+        "--end_date",
+        type=str,
+        help=
+        "What's the start date that you are interested in?, format %Y-%m-%d")
     args = parser.parse_args()
     get_linkedin_performance(
         target=args.linkedin_account if args.linkedin_account else _DALIANA,
         email=args.email,
         password=args.password,
-        post_count=args.post_num if args.post_num else 10,
+        post_count=args.post_num if args.post_num else _NORMAL_POST_COUNT,
         start_date=args.start_date,
-        end_date=args.end_date
-    )
+        end_date=args.end_date)
 
 
 if __name__ == "__main__":

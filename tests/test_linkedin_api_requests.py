@@ -10,22 +10,17 @@ TEST_PROFILE_ID = os.getenv("TEST_PROFILE_ID")
 TEST_PUBLIC_PROFILE_ID = os.getenv("TEST_PUBLIC_PROFILE_ID")
 TEST_CONVERSATION_ID = os.getenv("TEST_CONVERSATION_ID")
 
-if not (
-    TEST_LINKEDIN_USERNAME
-    and TEST_LINKEDIN_PASSWORD
-    and TEST_PROFILE_ID
-    and TEST_PUBLIC_PROFILE_ID
-    and TEST_CONVERSATION_ID
-):
+if not (TEST_LINKEDIN_USERNAME and TEST_LINKEDIN_PASSWORD and TEST_PROFILE_ID
+        and TEST_PUBLIC_PROFILE_ID and TEST_CONVERSATION_ID):
     print("Test config incomplete. Exiting...")
     sys.exit()
 
 
 @pytest.fixture(scope="module")
 def linkedin():
-    return Linkedin(
-        TEST_LINKEDIN_USERNAME, TEST_LINKEDIN_PASSWORD, refresh_cookies=True
-    )
+    return Linkedin(TEST_LINKEDIN_USERNAME,
+                    TEST_LINKEDIN_PASSWORD,
+                    refresh_cookies=True)
 
 
 def test_get_profile(linkedin):
@@ -92,9 +87,8 @@ def test_send_message_to_conversation(linkedin):
 
 
 def test_send_message_to_recipients(linkedin):
-    err = linkedin.send_message(
-        recipients=[TEST_PROFILE_ID], message_body="test message from pytest"
-    )
+    err = linkedin.send_message(recipients=[TEST_PROFILE_ID],
+                                message_body="test message from pytest")
     assert not err
 
 
@@ -149,22 +143,23 @@ def test_search_with_limit(linkedin):
 
 
 def test_search_people(linkedin):
-    results = linkedin.search_people(keywords="software", include_private_profiles=True)
+    results = linkedin.search_people(keywords="software",
+                                     include_private_profiles=True)
     assert results
 
 
 def test_search_people_with_limit(linkedin):
-    results = linkedin.search_people(
-        keywords="software", include_private_profiles=True, limit=1
-    )
+    results = linkedin.search_people(keywords="software",
+                                     include_private_profiles=True,
+                                     limit=1)
     assert results
     assert len(results) == 1
 
 
 def test_search_people_by_region(linkedin):
-    results = linkedin.search_people(
-        keywords="software", include_private_profiles=True, regions=["105080838"]
-    )
+    results = linkedin.search_people(keywords="software",
+                                     include_private_profiles=True,
+                                     regions=["105080838"])
     assert results
 
 
@@ -178,9 +173,9 @@ def test_search_people_by_keywords_filter(linkedin: Linkedin):
 
 
 def test_search_jobs(linkedin):
-    jobs = linkedin.search_jobs(
-        keywords="data analyst", location_name="Germany", limit=1
-    )
+    jobs = linkedin.search_jobs(keywords="data analyst",
+                                location_name="Germany",
+                                limit=1)
 
     assert jobs
 
