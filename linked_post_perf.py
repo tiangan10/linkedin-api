@@ -165,12 +165,10 @@ def main():
     )
     parser.add_argument("--email",
                         type=str,
-                        help="Your linkedin account email",
-                        required=True)
+                        help="Your linkedin account email")
     parser.add_argument("--password",
                         type=str,
-                        help="Your linkedin account password",
-                        required=True)
+                        help="Your linkedin account password")
     parser.add_argument("--post_num",
                         type=int,
                         help="How many posts should be processed")
@@ -190,6 +188,14 @@ def main():
         help=
         "What's the start date that you are interested in?, format %Y-%m-%d")
     args = parser.parse_args()
+    if args.email is None or args.password is None:
+        secret = open('./secret.txt', 'r')
+        lines = secret.readlines()
+        print("We read the secret from secret file :)")
+        args.email = lines[0].split('#')[0]
+        args.password = lines[1].split('#')[0]
+        print(args.email, args.password)
+
     get_linkedin_performance(
         target=args.linkedin_account if args.linkedin_account else _DALIANA,
         email=args.email,
