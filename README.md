@@ -3,7 +3,7 @@ This tool is built upon [tomquirk/linkedin-api](https://github.com/tomquirk/link
 
 ## Installation
 ### Git clone
-```
+```shell
 git clone https://github.com/tiangan10/linkedin-api.git
 ```
 
@@ -26,7 +26,7 @@ the_linkedin_password	   # list the linkedin password here
 ```
 
 ## Run the command
-```
+```shell
 # Get the most recent 100 posts
 python3 linked_post_perf.py
 
@@ -38,4 +38,10 @@ python3 linked_post_perf.py --post_num=<number of posts to be fetched, e.g. 30>
 # to get all the posts posted after the given start_date.
 python3 linked_post_perf.py --start_date=<yyyy-mm-dd> --end_date=yyyy-mm-dd>
 
+```
+Note: after running the command, the analysis result will be saved in your Documents file. You can find the output file from your terminal log. An example command output is as below:
+```
+We will get TOP 100 posts info for dalianaliu.
+In total we get 100 entries
+the file is /Users/tiangan/Documents/linkedin_api/data/20220103-17:04.tsv
 ```

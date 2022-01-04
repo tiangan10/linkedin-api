@@ -111,7 +111,7 @@ def _write_to_csv(file_path, rows):
     dir_name = os.path.dirname(file_path)
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
-    print("the file is", file_path)
+    print("The analysis result is saved in", file_path)
     with open(file_path, "w", encoding="utf-8") as f:
         columns = [
             "url",
