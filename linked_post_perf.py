@@ -7,7 +7,7 @@ import glob
 import os
 
 _DALIANA = "dalianaliu"
-_FILE_PATH = "/Users/" + os.getlogin() + "/Documents/linkedin_api/data/"
+_FILE_PATH = os.path.dirname(os.path.realpath(__file__))
 _MAX_POST_COUNT = 2000
 _NORMAL_POST_COUNT = 100
 
