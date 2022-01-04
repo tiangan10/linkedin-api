@@ -8,7 +8,7 @@ import os
 
 _DALIANA = "dalianaliu"
 _FILE_PATH = "/Users/" + os.getlogin() + "/Documents/linkedin_api/data/"
-_MAX_POST_COUNT = 1000
+_MAX_POST_COUNT = 2000
 _NORMAL_POST_COUNT = 100
 
 
@@ -16,6 +16,7 @@ def _get_abs_time(time_diff):
     num, unit, _ = time_diff.split(" ")
     num = int(num)
     today = datetime.today()
+    # print('unit:', unit)
 
     if unit.startswith("day"):
         time = today + relativedelta(days=-num)
@@ -27,6 +28,8 @@ def _get_abs_time(time_diff):
         time = today + relativedelta(weeks=-num)
     elif unit.startswith("minute"):
         time = today + relativedelta(minutes=-num)
+    elif unit.startswith("year"):
+        time = today +relativedelta(years=-num)
     abs_time = datetime.strftime(time, "%Y-%m-%d %H:%M")
     return abs_time
 
@@ -65,6 +68,9 @@ def _get_post_url(post, row):
 
 def _get_post_text(post, row):
     text = _get_val(post, "commentary", "text", "text")
+    if text is None:
+        row["text"] = "Found no text. Likely it is a repo."
+        return
     text = text.replace("\n", " ")
     row["text"] = text
 
@@ -135,7 +141,7 @@ def get_linkedin_performance(target, email, password, post_count, start_date,
         print(
             "You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date..."
         )
-        post_count = _MAX_POST_COUNT
+        post_count = max(_MAX_POST_COUNT, post_count)
     api = Linkedin(email, password)
     target_user = api.get_profile(target)
     print("We will get TOP %d posts info for %s." % (post_count, target))
