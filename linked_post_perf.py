@@ -162,7 +162,7 @@ def get_linkedin_performance(target, email, password, post_count, start_date,
     file_name = datetime.strftime(datetime.today(), "%Y%m%d-%H:%M") + ".tsv"
     rows = _filter_data(rows, start_date, end_date)
     print("In total we get %d entries" % len(rows))
-    _write_to_csv(_FILE_PATH + file_name, rows)
+    _write_to_csv(_FILE_PATH + '/' + file_name, rows)
 
 
 def main():
