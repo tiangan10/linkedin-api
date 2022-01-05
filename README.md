@@ -41,7 +41,7 @@ python3 linked_post_perf.py --start_date=<yyyy-mm-dd> --end_date=yyyy-mm-dd>
 ```
 Note: after running the command, the analysis result will be saved in your Documents file. You can find the output file from your terminal log. An example command output is as below:
 ```
-We will get TOP 100 posts info for dalianaliu.
+We will get TOP 100 posts info for <your favorite linkedin account>.
 In total we get 100 entries
 the file is /Users/tiangan/Documents/linkedin_api/data/20220103-17:04.tsv
 ```
