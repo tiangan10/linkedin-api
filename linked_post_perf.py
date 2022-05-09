@@ -198,8 +198,8 @@ def main():
         secret = open('./secret.txt', 'r')
         lines = secret.readlines()
         print("We read the secret from secret file :)")
-        args.email = lines[0].split('#')[0]
-        args.password = lines[1].split('#')[0]
+        args.email = lines[0].split('#')[0].strip()
+        args.password = lines[1].split('#')[0].strip()
         print(args.email, args.password)
 
     get_linkedin_performance(

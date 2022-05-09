@@ -54,7 +54,7 @@ class Client(object):
     def __init__(self,
                  *,
                  debug=False,
-                 refresh_cookies=False,
+                 refresh_cookies=True,
                  proxies={},
                  cookies_dir=None):
         self.session = requests.session()
