@@ -29,7 +29,7 @@ def _get_abs_time(time_diff):
     elif unit.startswith("minute"):
         time = today + relativedelta(minutes=-num)
     elif unit.startswith("year"):
-        time = today +relativedelta(years=-num)
+        time = today + relativedelta(years=-num)
     abs_time = datetime.strftime(time, "%Y-%m-%d %H:%M")
     return abs_time
 
@@ -47,8 +47,9 @@ def _get_val(the_dict, *args):
 
 
 def _get_reaction_type_count(post, row):
-    count_stats = _get_val(post, "socialDetail", "totalSocialActivityCounts",
-                           "reactionTypeCounts")
+    count_stats = _get_val(
+        post, "socialDetail", "totalSocialActivityCounts", "reactionTypeCounts"
+    )
     if count_stats is None:
         print("return none")
         return
@@ -57,10 +58,10 @@ def _get_reaction_type_count(post, row):
 
 
 def _get_post_url(post, row):
-    actions = _get_val(post, "updateMetadata", "actions")
+    actions = _get_val(post, "updateMetadata", "updateActions", "actions")
     if actions is None or len(actions) < 2:
         return
-    action = actions[2]
+    action = actions[1]
     if action["actionType"] != "SHARE_VIA":
         return None
     row["url"] = action["url"]
@@ -76,8 +77,9 @@ def _get_post_text(post, row):
 
 
 def _get_post_num_comments(post, row):
-    num_comments = _get_val(post, "socialDetail", "totalSocialActivityCounts",
-                            "numComments")
+    num_comments = _get_val(
+        post, "socialDetail", "totalSocialActivityCounts", "numComments"
+    )
     row["comment"] = num_comments
 
 
@@ -95,7 +97,7 @@ def _get_row_val(row, key, default_val=""):
 def _filter_data(rows, start_date, end_date):
     new_rows = []
     for row in rows:
-        row_time = _get_row_val(row, 'abs_time')
+        row_time = _get_row_val(row, "abs_time")
         row_time = row_time[:10]
         if not row_time:
             continue
@@ -135,8 +137,9 @@ def _write_to_csv(file_path, rows):
             f.write("\n")
 
 
-def get_linkedin_performance(target, email, password, post_count, start_date,
-                             end_date):
+def get_linkedin_performance(
+    target, email, password, post_count, start_date, end_date
+):
     if start_date or end_date:
         print(
             "You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date..."
@@ -145,12 +148,14 @@ def get_linkedin_performance(target, email, password, post_count, start_date,
     api = Linkedin(email, password)
     target_user = api.get_profile(target)
     print("We will get TOP %d posts info for %s." % (post_count, target))
-    posts = api.get_profile_posts(urn_id=target_user["profile_id"],
-                                  post_count=post_count)
+    posts = api.get_profile_posts(
+        urn_id=target_user["profile_id"], post_count=post_count
+    )
     if len(posts) > post_count:
         print(
             "There are %d posts retrieved, it is because we have to fetch 100 multiple posts."
-            % len(posts))
+            % len(posts)
+        )
         posts = posts[:post_count]
     rows = [dict() for i in range(len(posts))]
     for i, post in enumerate(posts):
@@ -162,22 +167,20 @@ def get_linkedin_performance(target, email, password, post_count, start_date,
     file_name = datetime.strftime(datetime.today(), "%Y%m%d-%H%M") + ".tsv"
     rows = _filter_data(rows, start_date, end_date)
     print("In total we get %d entries" % len(rows))
-    _write_to_csv(_FILE_PATH + '/' + file_name, rows)
+    _write_to_csv(_FILE_PATH + "/" + file_name, rows)
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="This app helps you to find your linkedin post performance."
     )
-    parser.add_argument("--email",
-                        type=str,
-                        help="Your linkedin account email")
-    parser.add_argument("--password",
-                        type=str,
-                        help="Your linkedin account password")
-    parser.add_argument("--post_num",
-                        type=int,
-                        help="How many posts should be processed")
+    parser.add_argument("--email", type=str, help="Your linkedin account email")
+    parser.add_argument(
+        "--password", type=str, help="Your linkedin account password"
+    )
+    parser.add_argument(
+        "--post_num", type=int, help="How many posts should be processed"
+    )
     parser.add_argument(
         "--linkedin_account",
         type=str,
@@ -186,20 +189,20 @@ def main():
     parser.add_argument(
         "--start_date",
         type=str,
-        help=
-        "What's the start date that you are interested in?, format %Y-%m-%d")
+        help="What's the start date that you are interested in?, format %Y-%m-%d",
+    )
     parser.add_argument(
         "--end_date",
         type=str,
-        help=
-        "What's the start date that you are interested in?, format %Y-%m-%d")
+        help="What's the start date that you are interested in?, format %Y-%m-%d",
+    )
     args = parser.parse_args()
     if args.email is None or args.password is None:
-        secret = open('./secret.txt', 'r')
+        secret = open("./secret.txt", "r")
         lines = secret.readlines()
         print("We read the secret from secret file :)")
-        args.email = lines[0].split('#')[0].strip()
-        args.password = lines[1].split('#')[0].strip()
+        args.email = lines[0].split("#")[0].strip()
+        args.password = lines[1].split("#")[0].strip()
         print(args.email, args.password)
 
     get_linkedin_performance(
@@ -208,7 +211,8 @@ def main():
         password=args.password,
         post_count=args.post_num if args.post_num else _NORMAL_POST_COUNT,
         start_date=args.start_date,
-        end_date=args.end_date)
+        end_date=args.end_date,
+    )
 
 
 if __name__ == "__main__":
