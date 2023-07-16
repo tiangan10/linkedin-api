@@ -154,7 +154,7 @@ def get_linkedin_performance(
             "You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date..."
         )
         post_count = max(_MAX_POST_COUNT, post_count)
-    api = Linkedin(email, password, refresh_cookies=True)
+    api = Linkedin(email, password)
     target_user = api.get_profile(target)
     print("We will get TOP %d posts info for %s." % (post_count, target))
     posts = api.get_profile_posts(
