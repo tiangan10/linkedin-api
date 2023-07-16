@@ -13,22 +13,26 @@ _NORMAL_POST_COUNT = 100
 
 
 def _get_abs_time(time_diff):
-    num, unit, _ = time_diff.split(" ")
-    num = int(num)
+    num_and_unit = time_diff.split(" ")[0]
+    for i, c in enumerate(num_and_unit):
+        if not c.isdigit():
+            break
+    num = int(num_and_unit[:i])
+    unit = num_and_unit[i:]
     today = datetime.today()
     # print('unit:', unit)
 
-    if unit.startswith("day"):
+    if unit.startswith("d"):
         time = today + relativedelta(days=-num)
-    elif unit.startswith("hour"):
+    elif unit.startswith("h"):
         time = today + relativedelta(hours=-num)
-    elif unit.startswith("month"):
+    elif unit.startswith("mo"):
         time = today + relativedelta(months=-num)
-    elif unit.startswith("week"):
+    elif unit.startswith("w"):
         time = today + relativedelta(weeks=-num)
-    elif unit.startswith("minute"):
+    elif unit.startswith("m"):
         time = today + relativedelta(minutes=-num)
-    elif unit.startswith("year"):
+    elif unit.startswith("y"):
         time = today + relativedelta(years=-num)
     abs_time = datetime.strftime(time, "%Y-%m-%d %H:%M")
     return abs_time
@@ -84,8 +88,13 @@ def _get_post_num_comments(post, row):
 
 
 def _get_post_time(post, row):
+    # print('the post:', post)
     time_info = _get_val(post, "actor", "subDescription", "accessibilityText")
+    # print('the time_info', time_info)
+
     abs_time = _get_abs_time(time_info)
+
+
     row["time_info"] = time_info
     row["abs_time"] = abs_time
 
@@ -145,7 +154,7 @@ def get_linkedin_performance(
             "You have specified the start_date or end_date, we will try fetching as much as we can, and then filter by date..."
         )
         post_count = max(_MAX_POST_COUNT, post_count)
-    api = Linkedin(email, password)
+    api = Linkedin(email, password, refresh_cookies=True)
     target_user = api.get_profile(target)
     print("We will get TOP %d posts info for %s." % (post_count, target))
     posts = api.get_profile_posts(
